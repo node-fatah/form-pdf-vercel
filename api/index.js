@@ -37,15 +37,18 @@ const previousDataSheetName = "Dataset";
 const driveFolderId = "1l8snVmCcBUiM1WzibJIZpeOi-pOTVeum";
 
 let client;
+let sheets;
 let cachedRows = [];
 let indexedDebitur = {};
 
 async function getAuthClient() {
   if (!client) {
     client = await auth.getClient();
+    sheets = google.sheets({ version: "v4", auth: client }); // ✅ INISIALISASI sheets SEKALI SAJA
   }
   return client;
 }
+
 
 async function preloadData() {
   try {
