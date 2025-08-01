@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AFI | Form Print PDF</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  background-color: #f5f6fa;
+  color: #333;
+}
+.logo-container {
+        margin-top: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+}
+.logo-container img {
+        max-width: 60px;
+}
+.logo-title {
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 5px;
+}
+.logo-subtitle {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        margin-top: 0;
+}
+.form-card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 0px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+label {
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+  color: #495057;
+}
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #0d6efd;
+  outline: none;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+input[disabled],
+select[disabled] {
+  background-color: #e9ecef;
+  color: #6c757d;
+  opacity: 1;
+}
+option {
+  font-size: 11px;
+}
+
+
+#installmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 11px;
+}
+#installmentTable th {
+  background-color: #f1f3f5;
+  font-weight: 600;
+  padding: 8px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center;
+}
+#installmentTable td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #dee2e6;
+  color: #495057;
+}
+
+
+.btn-sm {
+  font-size: 11px;
+  padding: 6px 11px;
+  border-radius: 4px !important;
+}
+
+#loading-overlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+#loading-overlay span {
+  color: #333;
+}
+select,
+button,
+.btn,
+.form-select {
+  font-size: 11px !important;
+  padding: 6px 8px !important;
+  height: auto !important;
+  line-height: 1.4 !important;
+  border-radius: 4px !important;
+  font-family: 'Inter', sans-serif;
+}
+input[readonly],
+textarea[readonly],
+select[readonly] {
+  background-color: #e9ecef; 
+  color: #6c757d;    
+  pointer-events: none;  
+  border-color: #ced4da; 
+}
+</style>
+
+
+</head>
+<body>
+    <div class="container form-container mt-4 "style="max-width: 720px;; margin-top: 0px;">
+    <div class="form-card">
+        <div class="logo-container">
+          <img src="https://static.wixstatic.com/media/30fa2e_387864f2775646d8ba60bb154d579510~mv2.png" alt="Logo Akulaku" class="img-fluid mx-auto d-block">
+          <p class="logo-title">Generate SP dan Kartu Piutang</p>
+          <p class="logo-subtitle">PT Akulaku Finance Indonesia</p>
+        </div>
+    <hr>
+
+    <div id="loading-overlay">
+      <span>Loading...</span>
+    </div>
+
+    <form id="saveForm" action="/saveAndPrint" method="POST">
+    <div class="container">
+
+        <div class="mb-3">
+                <select class="form-select border-danger text-danger" name="type" id="type" required onchange="onTypeChange()">
+                <option value="" disabled selected>Silahkan Pilih Form ...</option>
+                <option value="suratPeringatan">Surat Peringatan</option>
+                <option value="customerCard">Customer Card</option>
+                <option value="reposition">Surat Kuasa</option>
+                </select>
+        </div>
+
+
+
+        <div class="row mb-3">
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="nomorSurat" class="form-label">Nomor Surat :</label>
+                <input type="text" id="nomorSurat" name="nomorSurat" class="form-control" readonly>
+                </div>
+                </div>
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="printedDate" class="form-label">Tanggal Surat :</label>
+                <input type="date" id="printedDate" name="printedDate" class="form-control" required>
+                </div>
+                </div>
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="peringatanLevel" class="form-label">Level Surat :</label>
+                <select class="form-select" id="peringatanLevel" name="peringatanLevel" required disabled>
+                <option value="" disabled selected>Pilih Level SP</option>
+                <option value="Surat Peringatan (SP1)">Surat Peringatan (SP1)</option>
+                <option value="Surat Peringatan (SP2)">Surat Peringatan (SP2)</option>
+                <option value="Surat Peringatan (SP3)">Surat Peringatan (SP3)</option>
+                </select>
+                </div>
+                </div>
+        </div>
+
+        <div class="row mb-3">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label for="debitur" class="form-label">Nama Debitur :</label>
+                <select id="debitur" name="debitur" class="form-select" onchange="onDebiturChange()" required>
+                <option value=""></option>
+                <% debitur.forEach(function(name) { %>
+                <option value="<%= name %>"><%= name %></option>
+                <% }) %>
+                </select>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label for="angsuranKe" class="form-label">Periode :</label>
+                <select id="angsuranKe" name="angsuranKe" class="form-select" required>
+                <option value=""></option>
+                <% angsuranKe.forEach(function(angsuran) { %>
+                <option value="<%= angsuran %>"><%= angsuran %></option>
+                <% }) %>
+                </select>
+                </div>
+                </div>
+        </div>
+
+        <div class="row mb-3">
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="idAplikasi" class="form-label">Nomor Kontrak :</label>
+                <input type="text" id="idAplikasi" name="idAplikasi" class="form-control" readonly>
+                </div>
+                </div>
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="uidCollection" class="form-label">Jatuh Tempo :</label>
+                <input type="text" id="uidCollection" name="uidCollection" class="form-control" readonly>
+                </div>
+                </div>
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="overdueSekarang" class="form-label">Overdue :</label>
+                <input type="text" id="overdueSekarang" name="overdueSekarang" class="form-control" readonly>
+                </div>
+                </div>
+        </div>
+
+        <div class="row mb-3">
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="angsuran" class="form-label">Angsuran Perbulan :</label>
+                <input type="text" id="angsuran" name="angsuran" class="form-control" readonly >
+                </div>
+                </div>
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="totalOverdue" class="form-label">Nominal Pembayaran :</label>
+                <input type="text" id="totalOverdue" name="totalOverdue" class="form-control" readonly >
+                </div>
+                </div>
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="osPrincipal" class="form-label">Outstanding Principal :</label>
+                <input type="text" id="osPrincipal" name="osPrincipal" class="form-control" readonly >
+                </div>
+                </div>
+        </div>
+
+        <div class="row mb-3">
+                <div class="col-md-12">
+                <div class="form-group">
+                <label for="debiturStatus" class="form-label">Status Debitur :</label>
+                <input type="text" id="debiturStatus" name="debiturStatus" class="form-control" readonly >
+                </div>
+                </div>
+        </div>
+
+        <div class="row mt-3">
+                <div class="col-md-4">
+                <button type="submit" class="btn btn-success w-100">Save & Print</button>
+                </div>
+                <div class="col-md-4">
+                <button type="reset" class="btn btn-secondary w-100">Reset</button>
+                </div>
+         <div class="col-md-4">
+    <a href="/?forceReload=true" class="btn btn-primary w-100">🔄 Refresh</a>
+  </div>
+        </div>
+</div>
+
+
+
+        <div class="mt-4">
+            <table class="table table-striped table-bordered" id="installmentTable">
+            <thead>
+            <tr>
+                  <th>Periode</th>
+                  <th>Tgl Jatuh Tempo</th>
+                  <th>Angsuran Perbulan</th>
+                  <th>Pembayaran</th>
+                  <th>Sisa Pokok Hutang</th>
+                	<th>Overdue</th>
+                	<th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            </table>
+        </div>
+</form>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <script>
+  async function onDebiturChange() {
+  const debiturName = document.getElementById("debitur").value;
+  const angsuranDropdown = document.getElementById("angsuranKe");
+  const tableBody = document.querySelector("#installmentTable tbody");
+
+  // Kosongkan dropdown Angsuran Ke dan tabel
+  angsuranDropdown.innerHTML = '<option value=""></option>';
+  tableBody.innerHTML = "";
+
+  if (!debiturName) return; // Jika tidak ada debitur dipilih, selesai
+
+  try {
+    const response = await fetch(`/getDebiturData?name=${encodeURIComponent(debiturName)}`);
+    const data = await response.json();
+
+    // Isi input lainnya
+    document.getElementById("idAplikasi").value = data.idAplikasi || "";
+    document.getElementById("uidCollection").value = data.uidCollection || "";
+    document.getElementById("overdueSekarang").value = data.overdueSekarang || "";
+    document.getElementById("angsuran").value = data.angsuran || "";
+    document.getElementById("totalOverdue").value = data.totalOverdue || "";
+    document.getElementById("osPrincipal").value = data.osPrincipal || "";
+    document.getElementById("debiturStatus").value = data.debiturStatus || "";
+
+    // Isi dropdown Angsuran Ke
+    if (data.angsuranKe && Array.isArray(data.angsuranKe)) {
+      data.angsuranKe.forEach((angsuran) => {
+        const option = document.createElement("option");
+        option.value = angsuran;
+        option.textContent = angsuran;
+        angsuranDropdown.appendChild(option);
+      });
+    }
+
+   const tableResponse = await fetch(`/getDebiturTableData?name=${encodeURIComponent(debiturName)}`);
+    const tableResult = await tableResponse.json();
+
+    if (tableResult.success && tableResult.data.length > 0) {
+      const numberFormat = new Intl.NumberFormat('id-ID');
+
+      tableResult.data.forEach((row) => {
+        const tr = document.createElement("tr");
+
+        // Format dan buat kolom berdasarkan data
+        ["0", "1", "2", "3", "4", "5", "6"].forEach((colIndex, index) => {
+          const td = document.createElement("td");
+          let cellData = row[colIndex] || "0"; 
+
+
+          td.textContent = cellData;
+          tr.appendChild(td);
+        });
+
+        tableBody.appendChild(tr);
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching Debitur data:", error);
+    alert("Terjadi kesalahan saat memuat data debitur atau tabel.");
+  }
+}
+
+  const form = document.querySelector("#saveForm");
+  const loadingOverlay = document.querySelector("#loading-overlay");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); // Cegah submit default untuk menangani dengan JavaScript
+
+    // Tampilkan loading
+    loadingOverlay.style.display = "flex";
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) throw new Error("Gagal menyimpan data.");
+
+      const result = await response.json();
+      if (result.success) {
+        window.open(result.pdfUrl, "_blank"); // Buka PDF di tab baru
+      } else {
+        alert("Gagal menyimpan atau mencetak SP. Pesan: " + result.error);
+      }
+
+      form.reset(); // Kosongkan form
+      const tableBody = document.querySelector("#installmentTable tbody");
+      tableBody.innerHTML = ""; // Menghapus semua baris tabel
+
+
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan. Silakan coba lagi.");
+    } finally {
+      loadingOverlay.style.display = "none"; // Sembunyikan loading
+    }
+  });
+
+  document.querySelector("button[type='reset']").addEventListener("click", () => {
+    // Kosongkan tabel
+    const tableBody = document.querySelector("#installmentTable tbody");
+    tableBody.innerHTML = ""; // Menghapus semua baris tabel
+  });
+
+</script>
+
+<script>
+function onTypeChange() {
+  const selectedForm = document.getElementById("type").value;
+  const nomorSuratInput = document.getElementById("nomorSurat");
+  const peringatanLevelSelect = document.getElementById("peringatanLevel");
+
+  // Logika untuk field nomorSurat
+  if (selectedForm === "suratPeringatan" || selectedForm === "reposition") {
+    nomorSuratInput.readOnly = false;
+    nomorSuratInput.value = "";
+    nomorSuratInput.style.backgroundColor = ""; // Default style
+    nomorSuratInput.style.color = "";
+  } else {
+    nomorSuratInput.readOnly = true;
+    nomorSuratInput.value = "0";
+    nomorSuratInput.style.backgroundColor = "#e9ecef";
+    nomorSuratInput.style.color = "#6c757d";
+  }
+
+  // Logika untuk peringatanLevel
+  if (selectedForm === "suratPeringatan") {
+    peringatanLevelSelect.disabled = false;
+  } else {
+    peringatanLevelSelect.disabled = true;
+    peringatanLevelSelect.value = ""; // Reset saat dinonaktifkan
+  }
+}
+
+// Jalankan saat halaman dibuka (jika value sudah ada dari edit form, dll)
+document.addEventListener("DOMContentLoaded", () => {
+  onTypeChange();
+});
+</script>
+
+
+<footer style="position: fixed; bottom: 10px; right: 10px;">
+  <a href="mailto:suyuti.fatah@akulaku.com" title="Contact Support">
+  <i class="fas fa-info-circle" style="font-size: 24px; color: #007bff;"></i>
+  </a>
+</footer>
+</body>
+</html>

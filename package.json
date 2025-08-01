@@ -1,0 +1,15 @@
+{
+  "name": "form-pdf-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "googleapis": "^133.0.0",
+    "serverless-http": "^3.0.2"
+  }
+}
