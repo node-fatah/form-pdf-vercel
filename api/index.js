@@ -111,7 +111,7 @@ app.get("/getDebiturData", (req, res) => {
       return res.status(404).json({ error: "Debitur not found" });
     }
 
-    const lastRow = debiturRows[debiturRows.length - 1];
+    const lastRow = debiturRows[0];
     const debiturStatus = lastRow[15];
 
     res.json({
